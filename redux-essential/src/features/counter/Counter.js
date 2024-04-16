@@ -9,7 +9,7 @@ import {
 } from "./counterSlice";
 import styles from "./Counter.module.css";
 
-const Counter = () => {
+export function Counter() {
   const count = useSelector(selectCount);
   const dispatch = useDispatch();
   const [incrementAmount, setIncrementAmount] = useState("2");
@@ -57,6 +57,4 @@ const Counter = () => {
       </div>
     </div>
   );
-};
-
-export default Counter;
+}
