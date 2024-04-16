@@ -33,6 +33,28 @@ const Counter = () => {
           -
         </button>
       </div>
+      <div className={styles.row}>
+        <input
+          className={styles.textbox}
+          aria-label="Set increment amount"
+          value={incrementAmount}
+          onChange={(e) => setIncrementAmount(e.target.value)}
+        />
+        <button
+          className={styles.button}
+          onClick={() =>
+            dispatch(incrementByAmount(Number(incrementAmount) || 0))
+          }
+        >
+          Add Amount
+        </button>
+        <button
+          className={styles.asyncButton}
+          onClick={() => dispatch(incrementAsync(Number(incrementAmount) || 0))}
+        >
+          Add Async
+        </button>
+      </div>
     </div>
   );
 };
