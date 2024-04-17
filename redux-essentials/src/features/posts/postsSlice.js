@@ -4,7 +4,7 @@ import { client } from '../../api/client'
 const initialState = { posts: [], status: 'idle', error: null }
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await client.getGamepads('/fakeApi/posts')
+  const response = await client('/fakeApi/posts')
   return response.data
 })
 
