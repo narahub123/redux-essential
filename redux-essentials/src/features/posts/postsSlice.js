@@ -1,20 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { sub } from 'date-fns'
 
-const initialState = [
-  {
-    id: '1',
-    title: 'First Post',
-    content: 'Hello!',
-    date: sub(new Date(), { minutes: 10 }).toISOString(),
-  },
-  {
-    id: '2',
-    title: 'Seconde Post',
-    content: 'More text',
-    date: sub(new Date(), { minutes: 10 }).toISOString(),
-  },
-]
+const initialState = { posts: [], status: 'idle', error: null }
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -22,7 +9,8 @@ const postsSlice = createSlice({
   reducers: {
     reactionAdded(state, action) {
       const { postId, reaction } = action.payload
-      const existingPost = state.find((post) => post.id === postId)
+      const existingPost = state.posts.find((post) => post.id === postId)
+      // const existingPost = state.find((post) => post.id === postId)
       if (existingPost) {
         existingPost.reaction[reaction]++
       }
@@ -30,7 +18,8 @@ const postsSlice = createSlice({
     // how to create reducer
     postAdded: {
       reducer(state, action) {
-        state.push(action.payload)
+        state.posts.push(action.payload)
+        // state.push(action.payload)
       },
       prepare(title, content, userId) {
         return {
@@ -47,6 +36,7 @@ const postsSlice = createSlice({
     postUpdated(state, action) {
       const { id, title, content } = action.payload
       const existingPost = state.posts.find((post) => post.id === id)
+      // const existingPost = state.find((post) => post.id === id)
       if (existingPost) {
         existingPost.title = title
         existingPost.content = content
@@ -61,7 +51,7 @@ export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
 export default postsSlice.reducer
 
 // selector function
-export const selectAllPosts = (state) => state.posts
+export const selectAllPosts = (state) => state.posts.posts
 
 export const selectPostById = (state, postId) =>
-  state.posts.find((post) => post.id === postId)
+  state.posts.posts.find((post) => post.id === postId)
