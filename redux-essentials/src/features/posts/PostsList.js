@@ -1,12 +1,21 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { selectAllPosts } from './postsSlice'
+import { fetchPosts, selectAllPosts } from './postsSlice'
 
 export const PostsList = () => {
+  const dispatch = useDispatch()
   // read data from store state
   const posts = useSelector(selectAllPosts)
   // const posts = useSelector((state) => state.posts)
+
+  const postStatus = useSelector((state) => state.posts.status)
+
+  useEffect(() => {
+    if (postStatus === 'idle') {
+      dispatch(fetchPosts())
+    }
+  }, [postStatus, dispatch])
 
   const orderedPosts = posts
     .slice()

@@ -1,7 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { sub } from 'date-fns'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { client } from '../../api/client'
 
 const initialState = { posts: [], status: 'idle', error: null }
+
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
+  const response = await client.getGamepads('/fakeApi/posts')
+  return response.data
+})
 
 const postsSlice = createSlice({
   name: 'posts',
