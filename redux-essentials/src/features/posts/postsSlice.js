@@ -17,7 +17,7 @@ const postsSlice = createSlice({
       const existingPost = state.posts.find((post) => post.id === postId)
       // const existingPost = state.find((post) => post.id === postId)
       if (existingPost) {
-        existingPost.reaction[reaction]++
+        existingPost.reactions[reaction]++
       }
     },
     // how to create reducer
