@@ -6,7 +6,7 @@ import { postUpdated, selectPostById } from './postsSlice'
 export const EditPostForm = ({ match }) => {
   const postId = match.params
 
-  const post = useSelector(selectPostById)
+  const post = useSelector((state) => selectPostById(state, postId))
   // const post = useSelector((state) =>
   //   state.posts.find((post) => post.id === postId),
   // )
