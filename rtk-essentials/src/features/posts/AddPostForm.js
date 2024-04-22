@@ -2,16 +2,18 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { addNewPost } from './postsSlice'
-// import { postAdded } from './postsSlice'
+import { useAddNewPostMutation } from '../api/apiSlice'
 import { selectAllUsers } from '../users/usersSlice'
 
 export const AddPostForm = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState('')
-  const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
-  const dispatch = useDispatch()
+  const [addNewPost, { isLoading }] = useAddNewPostMutation()
+  // const [addRequestStatus, setAddRequestStatus] = useState('idle')
+
+  // const dispatch = useDispatch()
 
   const users = useSelector(selectAllUsers)
 
@@ -19,34 +21,26 @@ export const AddPostForm = () => {
   const onContentChanged = (e) => setContent(e.target.value)
   const onAuthorChanged = (e) => setUserId(e.target.value)
 
-  const canSave =
-    [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
+  const canSave = [title, content, userId].every(Boolean) && !isLoading
+  // const canSave =
+  //   [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
 
   // const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
 
   const onSavePostClicked = async () => {
     if (canSave) {
       try {
-        setAddRequestStatus('pending')
-        await dispatch(addNewPost({ title, content, user: userId })).unwrap()
+        await addNewPost({ title, content, user: userId }).unwrap()
+        // setAddRequestStatus('pending')
+        // await dispatch(addNewPost({ title, content, user: userId })).unwrap()
         setTitle('')
         setContent('')
         setUserId('')
       } catch (err) {
         console.error('Failed to save the post: ', err)
-      } finally {
-        setAddRequestStatus('idle')
       }
     }
   }
-  // const onSavePostClicked = () => {
-  //   if (title && content) {
-  //     dispatch(postAdded(title, content, userId))
-
-  //     setTitle('')
-  //     setContent('')
-  //   }
-  // }
 
   const usersOptions = users.map((user) => (
     <option value={user.id} key={user.id}>
