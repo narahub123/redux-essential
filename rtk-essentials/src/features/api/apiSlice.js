@@ -10,7 +10,15 @@ export const apiSlice = createApi({
     getPost: builder.query({
       query: (postId) => `/posts/${postId}`,
     }),
+    addNewPost: builder.mutation({
+      query: (initialState) => ({
+        url: '/post',
+        method: 'POST',
+        body: initialState,
+      }),
+    }),
   }),
 })
 
-export const { useGetPostsQuery, useGetPostQuery } = apiSlice
+export const { useGetPostsQuery, useGetPostQuery, useAddNewPostMutation } =
+  apiSlice
