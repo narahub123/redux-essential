@@ -1,18 +1,15 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Spinner } from '../../components/Spinner'
-import { useAddNewPostMutation } from '../api/apiSlice'
-
-import { addNewPost } from './postsSlice'
+import { useAddNewPostMutation } from '../api/apiSlice' 
 import { selectAllUsers } from '../users/usersSlice'
 
 export const AddPostForm = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState('')
-  const [addNewPost, { isLoading }] = useAddNewPostMutation()
 
+  const [addNewPost, { isLoading }] = useAddNewPostMutation()
   const users = useSelector(selectAllUsers)
 
   const onTitleChanged = (e) => setTitle(e.target.value)
