@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { addNewPost } from './postsSlice'
-// import { postAdded } from './postsSlice'
 import { selectAllUsers } from '../users/usersSlice'
 
 export const AddPostForm = () => {
@@ -22,8 +21,6 @@ export const AddPostForm = () => {
   const canSave =
     [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
 
-  // const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
-
   const onSavePostClicked = async () => {
     if (canSave) {
       try {
@@ -39,14 +36,6 @@ export const AddPostForm = () => {
       }
     }
   }
-  // const onSavePostClicked = () => {
-  //   if (title && content) {
-  //     dispatch(postAdded(title, content, userId))
-
-  //     setTitle('')
-  //     setContent('')
-  //   }
-  // }
 
   const usersOptions = users.map((user) => (
     <option value={user.id} key={user.id}>
