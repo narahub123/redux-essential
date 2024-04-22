@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Spinner } from '../../components/Spinner'
@@ -36,38 +36,28 @@ let PostExcerpt = ({ post }) => {
 PostExcerpt = React.memo(PostExcerpt)
 
 export const PostsList = () => {
-  const { data: posts, isLoading, isSuccess, isError, error } = useGetPostsQuery
-  // const dispatch = useDispatch()
-  // read data from store state
+  const {
+    data: posts = [],
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetPostsQuery()
 
-  // const orderedPostIds = useSelector(selectPostIds)
-  // const posts = useSelector(selectAllPosts)
-  // const posts = useSelector((state) => state.posts)
-
-  // const postStatus = useSelector((state) => state.posts.status)
-  // const error = useSelector((state) => state.posts.error)
-
-  // useEffect(() => {
-  //   if (postStatus === 'idle') {
-  //     dispatch(fetchPosts())
-  //   }
-  // }, [postStatus, dispatch])
+  const sortedPosts = useMemo(() => {
+    const sortedPosts = posts.slice()
+    sortedPosts.sort((a, b) => b.date.localeComparer(a.date))
+    return sortedPosts
+  }, [posts])
 
   let content
 
   if (isLoading) {
     content = <Spinner text="Loading..." />
   } else if (isSuccess) {
-    content = posts.map((post) => <PostExcerpt key={post.id} post={post} />)
-    // Sort posts in reverse chronological order by datetime string
-    // const orderedPosts = posts
-    //   .slice()
-    //   .sort((a, b) => b.date.localeCompare(a.date))
-
-    // console.log(orderedPosts)
-    // content = orderedPosts.map((post) => (
-    //   <PostExcerpt key={post.id} post={post} />
-    // ))
+    content = sortedPosts.map((post) => (
+      <PostExcerpt key={post.id} post={post} />
+    ))
   } else if (isError) {
     content = <div>{error.toString()}</div>
   }
