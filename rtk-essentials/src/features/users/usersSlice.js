@@ -7,6 +7,16 @@ import {
 import { client } from '../../api/client'
 import { apiSlice } from '../api/apiSlice'
 
+export const extendedApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getUsers: builder.query({
+      query: () => '/users',
+    }),
+  }),
+})
+
+export const { useGetUsersQuery } = extendedApiSlice
+
 // const usersAdapter = createEntityAdapter()
 
 // const initialState = usersAdapter.getInitialState()
@@ -15,11 +25,8 @@ import { apiSlice } from '../api/apiSlice'
 // the query result object for a query with those parameters.
 // To generate a selector for a specific query argument, call `select(theQueryArg)`.
 // In this case, the users query has no params, so we don't pass anything to select()
-export const selectUsersResult = apiSlice.endpoints.getUsers.select()
-// export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-//   const response = await client.get('/fakeApi/users')
-//   return response.data
-// })
+export const selectUsersResult = extendedApiSlice.endpoints.getUsers.select()
+// export const selectUsersResult = apiSlice.endpoints.getUsers.select()
 
 const emptyUsers = []
 
