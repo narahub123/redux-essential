@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useGetPostQuery, useEditPostMutation } from '../api/apiSlice'
 
 export const EditPostForm = ({ match }) => {
-  const postId = match.params
+  const { postId } = match.params
 
   const { data: post } = useGetPostQuery(postId)
   const [updatePost, { isLoading }] = useEditPostMutation()
