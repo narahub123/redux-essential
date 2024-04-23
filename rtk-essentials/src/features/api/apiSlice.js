@@ -38,9 +38,21 @@ export const apiSlice = createApi({
         method: 'POST',
         body: { reaction },
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: 'Post', id: arg.postId },
-      ],
+      async onQueryStarted({ postId, reaction }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          apiSlice.util.updateQueryData('getPosts', undefined, (draft) => {
+            const post = draft.find((post) => post.id === postId)
+            if (post) {
+              post.reactions[reaction]++
+            }
+          }),
+        )
+        try {
+          await queryFulfilled
+        } catch (error) {
+          patchResult.undo()
+        }
+      },
     }),
   }),
 })
