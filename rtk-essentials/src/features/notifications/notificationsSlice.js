@@ -2,26 +2,70 @@ import {
   createAsyncThunk,
   createSlice,
   createEntityAdapter,
+  createSelector,
 } from '@reduxjs/toolkit'
 
-import { client } from '../../api/client'
+import { forceGenerateNotifications } from '../../api/server'
+import { apiSlice } from '../api/apiSlice'
+
+export const extendedApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => {
+    getNotications: builder.query({
+      query: () => '/notifications',
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
+      ) {
+        const ws = new WebSocket('ws://localhost')
+        try {
+          await cacheDataLoaded
+
+          const listener = (event) => {
+            const message = JSON.parse(event.data)
+            switch (message.type) {
+              case 'notifications': {
+                updateCachedData((draft) => {
+                  draft.push(...message.payload)
+                  draft.sort((a, b) => b.date.localeCompare(a.date))
+                })
+                break
+              }
+              default:
+                break
+            }
+          }
+
+          ws.addEventListener('message', listener)
+        } catch (error) {}
+        await cacheEntryRemoved
+        ws.close()
+      },
+    })
+  },
+})
+
+export const { useGetNotificationsQuery } = extendedApi
+
+const emptyNotifications = []
+
+export const selectNotificationsResult =
+  extendedApi.endpoints.getNotications.select()
+
+const selectNotificationsData = createSelector(
+  selectNotificationsResult,
+  (notificationsResult) => notificationsResult.data ?? emptyNotifications,
+)
+
+export const fetchNotificationsWebsocket = () => (dispatch, getState) => {
+  const allNotifications = selectNotificationsData(getState())
+  const [latestNotification] = allNotifications
+  const latestTimestamp = latestNotification?.date ?? ''
+  forceGenerateNotifications(latestTimestamp)
+}
 
 const notificationsAdapter = createEntityAdapter({
   sortComparer: (a, b) => b.date.localeCompare(a.date),
 })
-
-export const fetchNotifications = createAsyncThunk(
-  'notifications/fetchNotifications',
-  async (_, { getState }) => {
-    const allNotifications = selectAllNotifications(getState())
-    const [latestNotification] = allNotifications
-    const latestTimestamp = latestNotification ? latestNotification.date : ''
-    const response = await client.get(
-      `/fakeApi/notifications?since=${latestTimestamp}`,
-    )
-    return response.data
-  },
-)
 
 const notificationsSlice = createSlice({
   name: 'notifications',
